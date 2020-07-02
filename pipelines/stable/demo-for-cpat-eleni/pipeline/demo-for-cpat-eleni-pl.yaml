@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: demo-for-cpat-eleni
+  namespace: kabanero
+  author: Oscar I. Ricaud
+  date: 06/25/20
+spec:
+  params:
+    - name: registry
+      description: Specify the registry url.
+      default: docker.io
+    - name: image-registry-publish
+      description: determines if we want to push the image to a registry
+      default: 'true'
+    - name: index-image
+      description: name of image
+    - name: event-type
+      description: The event type
+      type: string
+    - name: event-ref
+      description: The event ref
+      type: string
+  resources:
+    - name: git-source
+      type: git
+    - name: docker-image
+      type: image
+  tasks:
+    - name: hello-world-task
+      resources:
+        inputs:
+          - name: source
+            resource: git-source
+          - name: image
+            resource: docker-image
+      params:
+        - name: registry
+          value: $(params.registry)
+      taskRef:
+        kind: Task
+        name: hello-world-task

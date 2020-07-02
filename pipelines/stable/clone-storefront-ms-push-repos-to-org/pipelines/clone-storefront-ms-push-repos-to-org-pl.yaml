@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: clone-storefront-ms-push-repos-to-org-pl
+  namespace: kabanero
+spec:
+  params:
+    - default: ""
+      description: Specify the Github organization to deploy the microservices to
+      name: github_org
+      type: string
+  tasks:
+    - name: clone-storefront-repo-automator
+      params:
+        - name: github_org
+          value: $(params.github_org)
+      taskRef:
+        kind: Task
+        name: clone-storefront-repo-automator-task

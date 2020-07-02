@@ -1,0 +1,72 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: custom-java-spring-boot2-pact-task
+spec:
+  inputs:
+    resources:
+      - name: git-source
+        type: git
+    params:
+      - name: maven-image
+        type: string
+        default: kabanero/java-spring-boot2:0.3
+  steps:
+    - name: pact-publish
+      securityContext:
+        privileged: true
+      image: $(inputs.params.maven-image)
+      workingdir: $(inputs.resources.git-source.path)
+      envFrom:
+        - configMapRef:
+            name: pactbroker-config
+            optional: true
+        - secretRef:
+            name: pactbroker-access
+            optional: true
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - |
+          set -e
+          if [[ -z "${PACTBROKER_URL}" ]]; then
+            echo "PactBroker url not set. Skipping pact publish"
+            exit 0
+          else
+              mvn install -q -f /project/appsody-boot2-snowdrop-pom.xml
+              mvn clean install pact:publish -Dpact.broker.url="${PACTBROKER_URL}" -Ppact-consumer
+          fi
+      volumeMounts:
+        - name: m2-repository
+          mountPath: .m2/repository
+    - name: pact-verify
+      securityContext:
+        privileged: true
+      image: $(inputs.params.maven-image)
+      workingdir: $(inputs.resources.git-source.path)
+      envFrom:
+        - configMapRef:
+            name: pactbroker-config
+            optional: true
+        - secretRef:
+            name: pactbroker-access
+            optional: true
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - |
+          set -e
+          if [[ -z "${PACTBROKER_URL}" ]]; then
+            echo "PactBroker url not set. Skipping pact verification"
+            exit 0
+          else
+              mvn install -q -f /project/appsody-boot2-snowdrop-pom.xml
+              PACT_HOST=$(echo "${PACTBROKER_URL}" | cut -d'/' -f3 | cut -d':' -f1)
+              mvn test -Dpact.verifier.publishResults='true' -Dpactbroker.host="${PACT_HOST}" -Ppact-producer
+          fi
+      volumeMounts:
+        - name: m2-repository
+          mountPath: .m2/repository
+  volumes:
+    - name: m2-repository
+      emptyDir: {}

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pipeline-server-configmap
+  namespace: kabanero
+data:
+  repo_org: ibm-garage-ref-storefront
+  repo_name: pipelines-server
+  image_registry_publish: 'false'
+  kabanero_pipeline_id: pipeline-manager

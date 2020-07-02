@@ -1,0 +1,89 @@
+apiVersion: v1
+items:
+- apiVersion: kabanero.io/v1alpha2
+  kind: Kabanero
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kabanero.io/v1alpha2","kind":"Kabanero","metadata":{"annotations":{},"creationTimestamp":"2020-05-26T18:31:53Z","finalizers":["kabanero.io.kabanero-operator"],"generation":39,"name":"kabanero","namespace":"kabanero","resourceVersion":"24392767","selfLink":"/apis/kabanero.io/v1alpha2/namespaces/kabanero/kabaneros/kabanero","uid":"0aed6986-26b7-45ce-ae65-24180627ffc0"},"spec":{"admissionControllerWebhook":{},"cliServices":{},"codeReadyWorkspaces":{"enable":false,"operator":{"customResourceInstance":{"devFileRegistryImage":{}}}},"collectionController":{},"events":{},"github":{},"landing":{"enable":false},"sso":{},"stackController":{},"stacks":{"pipelines":[{"https":{"url":"https://github.com/kabanero-io/kabanero-pipelines/releases/download/0.6.1/default-kabanero-pipelines.tar.gz"},"id":"default","sha256":"64aee2805d36127c2f1e0e5f0fc6fdae5cef19360c1bb506137584f3bd0988cc"},{"https":{"url":"https://github.com/oiricaud/pipeline-server/releases/download/67.0/default-kabanero-pipelines.tar.gz"},"id":"pipeline-manager","sha256":"279a7e063ab67c12aafbc88e665e38e1257abaf850dbdac7f1244746b2d73476"}],"repositories":[{"https":{"url":"https://github.com/kabanero-io/kabanero-stack-hub/releases/download/0.6.5/kabanero-stack-hub-index.yaml"},"name":"central"},{"https":{"url":"https://github.com/oiricaud/devops-demo-kabanero-pipelines/releases/download/v1.37/oiricaud-index.yaml"},"name":"typescript-angular"}]},"targetNamespaces":["kabanero","kabanero-samples","storefront"],"version":"0.6.1"},"status":{"admissionControllerWebhook":{"ready":"True"},"appsody":{"ready":"True","version":"0.3.0"},"cli":{"hostnames":["kabanero-cli-kabanero.gse-cloud-native-ocp4-fa9ee67c9ab6a7791435450358e564cc-0000.us-east.containers.appdomain.cloud"],"ready":"True"},"collectionController":{"ready":"True","version":"0.6.1"},"kabaneroInstance":{"ready":"True","version":"0.6.1"},"serverless":{"knativeServing":{"ready":"True","version":"0.12.1"},"ready":"True","version":"1.5.0"},"sso":{"configured":"False","ready":"False"},"stackController":{"ready":"True","version":"0.6.1"},"tekton":{"ready":"True","version":"v0.10.1"}}}
+    creationTimestamp: 2020-05-26T18:31:53Z
+    finalizers:
+    - kabanero.io.kabanero-operator
+    generation: 58
+    name: kabanero
+    namespace: kabanero
+    resourceVersion: "25416115"
+    selfLink: /apis/kabanero.io/v1alpha2/namespaces/kabanero/kabaneros/kabanero
+    uid: 0aed6986-26b7-45ce-ae65-24180627ffc0
+  spec:
+    admissionControllerWebhook: {}
+    cliServices: {}
+    codeReadyWorkspaces:
+      enable: false
+      operator:
+        customResourceInstance:
+          devFileRegistryImage: {}
+    collectionController: {}
+    events: {}
+    github: {}
+    landing:
+      enable: false
+    sso: {}
+    stackController: {}
+    stacks:
+      pipelines:
+      - https:
+          url: https://github.com/kabanero-io/kabanero-pipelines/releases/download/0.6.1/default-kabanero-pipelines.tar.gz
+        id: default
+        sha256: 64aee2805d36127c2f1e0e5f0fc6fdae5cef19360c1bb506137584f3bd0988cc
+      - https:
+          url: https://github.com/oiricaud/pipeline-server/releases/download/97.0/default-kabanero-pipelines.tar.gz
+        id: pipeline-manager
+        sha256: ""
+      repositories:
+      - https:
+          url: https://github.com/kabanero-io/kabanero-stack-hub/releases/download/0.6.5/kabanero-stack-hub-index.yaml
+        name: central
+      - https:
+          url: https://github.com/oiricaud/devops-demo-kabanero-pipelines/releases/download/v1.37/oiricaud-index.yaml
+        name: typescript-angular
+    targetNamespaces:
+    - kabanero
+    - kabanero-samples
+    - storefront
+    version: 0.6.1
+  status:
+    admissionControllerWebhook:
+      ready: "True"
+    appsody:
+      ready: "True"
+      version: 0.3.0
+    cli:
+      hostnames:
+      - kabanero-cli-kabanero.gse-cloud-native-ocp4-fa9ee67c9ab6a7791435450358e564cc-0000.us-east.containers.appdomain.cloud
+      ready: "True"
+    collectionController:
+      ready: "True"
+      version: 0.6.1
+    kabaneroInstance:
+      ready: "True"
+      version: 0.6.1
+    serverless:
+      knativeServing:
+        ready: "True"
+        version: 0.12.1
+      ready: "True"
+      version: 1.5.0
+    sso:
+      configured: "False"
+      ready: "False"
+    stackController:
+      ready: "True"
+      version: 0.6.1
+    tekton:
+      ready: "True"
+      version: v0.10.1
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

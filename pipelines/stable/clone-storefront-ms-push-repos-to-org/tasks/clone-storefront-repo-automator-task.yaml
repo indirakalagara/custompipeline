@@ -1,0 +1,118 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: clone-storefront-repo-automator-task
+  namespace: kabanero
+spec:
+  inputs:
+    params:
+      - description: Specify the Github organization to deploy the microservices to
+        name: github_org
+        type: string
+      - default: 'yellocabins/storefront:v5'
+        name: docker_image
+        type: string
+  steps:
+    - args:
+        - '-c'
+        - |
+          set -e
+
+          ls -la
+
+          gh version
+
+          git version
+
+          if [ -z "${github_token:-}" ] ; then
+            echo "User must provide github token with access to orgs"
+            exit 1
+          fi
+
+          if [ -z "${github_org:-}" ] ; then
+            echo "User must provide name for github organization to deploy storefront microservices"
+            exit 1
+          fi
+
+          if [ -z "${github_username:-}" ] ; then
+            echo "User must provide username for github deploy storefront microservices"
+            exit 1
+          fi
+          
+          gh config set -h github.com oauth_token $github_token
+          git config --global user.email $github_email
+          git config --global user.name $github_username
+          
+          cat ~/.gitconfig
+          
+          pwd
+          ls -la
+
+          echo "Github Organization: " $github_org
+          echo "Github Username: " $github_username
+          
+
+          echo "Storefront repositories will be cloned and uploaded at https://github.com/${github_org}"
+          
+          mkdir storefront-repo-automator
+
+          cd storefront-repo-automator 
+
+          spring_repos=([1]="orders-ms-spring" [2]="auth-ms-spring" [3]="customer-ms-spring" [4]="catalog-ms-spring" [5]="inventory-ms-spring" [6]="storefront-ui" [7]="storefront-mobile-ionic")
+
+          cd ..
+          # create empty repo
+          for repo in "${spring_repos[@]}"
+          do 
+              echo "Creating repo:" "$github_org"/"$repo"
+              pwd
+              echo -e "n" | gh repo create "$github_org"/"$repo" --public
+          done
+          sleep 5
+
+          # clone repo
+          for repo in "${spring_repos[@]}"
+          do 
+              echo "Cloning repos from ibm-garage-ref-storefront/"$repo""
+              gh repo clone https://github.com/ibm-garage-ref-storefront/${repo}
+          done
+          sleep 5
+
+          # Push all new repos to the github_org
+          for repo in "${spring_repos[@]}"
+          do 
+              echo "Pushing repos to https://github.com/${github_org}/${repo}"
+              cd $repo
+              rm -rf .git
+              git init
+              git add .
+              git remote add origin https://${github_username}:${github_token}@github.com/${github_org}/${repo}.git
+              git commit -m "forked "$repo" from storefront"
+              git push -u origin master
+              cd ../
+              pwd
+          done
+
+      command:
+        - /bin/bash
+      env:
+        - name: github_email
+          valueFrom:
+            configMapKeyRef:
+              name: clone-storefront-configmap
+              key: github_email
+        - name: github_token
+          valueFrom:
+            secretKeyRef:
+              name: clone-storefront-ms-secret
+              key: password
+        - name: github_username
+          valueFrom:
+            secretKeyRef:
+              name: clone-storefront-ms-secret
+              key: username
+        - name: github_org
+          value: $(inputs.params.github_org)
+      image: $(inputs.params.docker_image)
+      name: clone-storefront-automator-repo
+      resources: {}

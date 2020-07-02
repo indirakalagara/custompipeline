@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: custom-java-spring-boot2-sonarqube-task
+spec:
+  inputs:
+    resources:
+      - name: git-source
+        type: git
+    params:
+      - name: maven-image
+        type: string
+        default: kabanero/java-spring-boot2:0.3
+  steps:
+    - name: sonarqube
+      securityContext:
+        privileged: true
+      image: $(inputs.params.maven-image)
+      workingdir: $(inputs.resources.git-source.path)
+      env:
+        - name: SONARQUBE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: sonarqube-config
+              key: SONARQUBE_URL
+              optional: true
+        - name: SONARQUBE_USER
+          valueFrom:
+            secretKeyRef:
+              name: sonarqube-access
+              key: SONARQUBE_USER
+              optional: true
+        - name: SONARQUBE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sonarqube-access
+              key: SONARQUBE_PASSWORD
+              optional: true
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - |
+          set -e
+          if [ -z "${SONARQUBE_URL}" ]; then
+              echo "Skipping SonarQube tests - SonarQube not configured"
+          elif [ -z "${SONARQUBE_USER}" || -z "${SONARQUBE_PASSWORD}"]; then
+              echo "Skipping SonarQube tests - SonarQube credentials not found"
+          else
+              mvn install -q -f /project/appsody-boot2-snowdrop-pom.xml
+              mvn package
+              mvn sonar:sonar -Dsonar.host.url="${SONARQUBE_URL}" -Dsonar.login="${SONARQUBE_USER}" -Dsonar.password="${SONARQUBE_PASSWORD}"
+          fi
+      volumeMounts:
+        - name: m2-repository
+          mountPath: .m2/repository
+  volumes:
+    - name: m2-repository
+      emptyDir: {}

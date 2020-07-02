@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: hello-world-task
+  namespace: kabanero
+  author: Oscar I. Ricaud
+spec:
+  inputs:
+    params:
+      - name: package-manager-image
+        default: googlefu/oscar-image:v3.0
+        type: string
+      - name: registry
+        description: Specify the name of the project being built.
+        default: docker.io
+    resources:
+      - name: source
+        type: git
+      - name: image
+        type: image
+  steps:
+    - name: hello-world
+      image: $(inputs.params.package-manager-image)
+      script: |
+        echo "hello world!"
+
+      resources: {}
+      workingDir: $(inputs.resources.source.path)

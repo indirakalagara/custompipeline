@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clone-storefront-configmap
+  namespace: kabanero
+data:
+  github_username: oiricaud
+  github_email: yellowcabins@gmail.com

@@ -1,0 +1,9 @@
+[
+  {
+  "https": {
+    "url": "https://github.com/$REPO_NAME/$REPO_ORG/releases/download/$TAG_VERSION/default-kabanero-pipelines.tar.gz"
+  },
+  "id": "$KABANERO_PIPELINE_ID",
+  "sha256": "sha_token_auto_generated"
+  }
+]
